@@ -225,7 +225,7 @@ nav .dropdown::before {
     }
 
     .grid-3,
-    .grid-2 {
+.grid-2 {
         grid-template-columns: 1fr;
     }
 }
@@ -241,5 +241,106 @@ nav .dropdown::before {
 
     .logo {
         font-size: 20px;
+    }
+}
+
+.site-footer {
+    padding: 80px 10vw 40px;
+    background: rgba(0, 0, 0, 0.7);
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+}
+
+.footer-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 30px;
+}
+
+.footer-logo {
+    font-family: var(--font-display, 'Space Grotesk', sans-serif);
+    font-size: 1.4rem;
+    letter-spacing: 4px;
+    display: inline-block;
+    margin-bottom: 14px;
+}
+
+.footer-social {
+    display: flex;
+    gap: 12px;
+    margin-top: 16px;
+}
+
+.footer-social a {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(6px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    transition: border-color 0.3s ease, transform 0.3s ease;
+}
+
+.footer-social a:hover {
+    border-color: var(--c-accent, #00f2ea);
+    transform: translateY(-4px);
+}
+
+.footer-links h4,
+.footer-contact h4 {
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    font-size: 0.85rem;
+    margin-bottom: 16px;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.footer-links a {
+    display: block;
+    margin-bottom: 12px;
+    color: rgba(255, 255, 255, 0.75);
+    text-decoration: none;
+    font-size: 0.95rem;
+}
+
+.footer-links a:hover {
+    color: var(--c-accent, #00f2ea);
+}
+
+.footer-contact p {
+    margin-bottom: 10px;
+    color: rgba(255, 255, 255, 0.75);
+}
+
+.footer-contact a {
+    color: rgba(255, 255, 255, 0.9);
+    text-decoration: none;
+}
+
+.footer-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    padding-top: 20px;
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+@media (max-width: 600px) {
+    .site-footer {
+        padding: 70px 5vw 40px;
+    }
+
+    .footer-bottom {
+        flex-direction: column;
+        gap: 10px;
+        text-align: center;
     }
 }
