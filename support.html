@@ -166,6 +166,68 @@
             min-height: 150px;
             resize: vertical;
         }
+        .resource-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+            margin-top: 40px;
+        }
+        .resource-card {
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 16px;
+            padding: 30px;
+            background: rgba(255,255,255,0.02);
+            backdrop-filter: blur(12px);
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            min-height: 280px;
+        }
+        .resource-label {
+            font-size: 0.75rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--c-accent);
+        }
+        .resource-card ul {
+            list-style: none;
+            padding-left: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            color: rgba(255,255,255,0.65);
+            font-size: 0.9rem;
+        }
+        .resource-card ul li {
+            display: flex;
+            align-items: flex-start;
+        }
+        .resource-card ul li::before {
+            content: "•";
+            color: var(--c-accent);
+            margin-right: 8px;
+            line-height: 1;
+        }
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        .detail-panel {
+            padding: 30px;
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.07);
+            background: rgba(255,255,255,0.015);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .detail-panel h3 {
+            margin-bottom: 5px;
+            color: var(--c-accent);
+        }
+        }
         ::-webkit-scrollbar { width: 0px; background: transparent; }
     </style>
     <link rel="stylesheet" href="css/global.css">
@@ -255,6 +317,82 @@
                         <p>Join our active community of developers and engineers. Share solutions and learn from others.</p>
                         <br>
                         <p style="color: var(--c-accent);">community.anexee.com</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="self-service-hub">
+                <h2>Self-Service Hub</h2>
+                <p style="margin-top: 15px;">Find answers instantly or grab the latest resources—no ticket required.</p>
+                <div class="resource-grid">
+                    <div class="resource-card" id="self-faq">
+                        <span class="resource-label">Self FAQ</span>
+                        <h3>Instant Troubleshooting</h3>
+                        <p>Guided flows that mirror our support playbooks so your team can resolve common issues in minutes.</p>
+                        <ul>
+                            <li>Interactive diagnostics</li>
+                            <li>Device onboarding walk-throughs</li>
+                            <li>Platform availability dashboard</li>
+                        </ul>
+                        <a href="#" class="btn-cta" style="align-self:flex-start;padding:8px 20px;" data-hover>Browse Self FAQ</a>
+                    </div>
+                    <div class="resource-card" id="customer-faq">
+                        <span class="resource-label">Customer FAQ</span>
+                        <h3>Enterprise Playbook</h3>
+                        <p>Contract, billing, and governance answers curated for procurement, IT, and leadership stakeholders.</p>
+                        <ul>
+                            <li>Licensing & SLA breakdowns</li>
+                            <li>Security & compliance FAQ</li>
+                            <li>Rollout best practices</li>
+                        </ul>
+                        <a href="#" class="btn-cta" style="align-self:flex-start;padding:8px 20px;" data-hover>Open Customer FAQ</a>
+                    </div>
+                    <div class="resource-card" id="downloads">
+                        <span class="resource-label">Downloads</span>
+                        <h3>Ready-To-Deploy Assets</h3>
+                        <p>Grab the latest gateways, offline installers, protocol packs, and design templates.</p>
+                        <ul>
+                            <li>Gateway firmware & hotfixes</li>
+                            <li>Connector libraries</li>
+                            <li>Brand & UI starter kits</li>
+                        </ul>
+                        <a href="#" class="btn-cta" style="align-self:flex-start;padding:8px 20px;" data-hover>Visit Downloads</a>
+                    </div>
+                    <div class="resource-card" id="forum">
+                        <span class="resource-label">Forum</span>
+                        <h3>Peer-to-Peer Support</h3>
+                        <p>Trade recipes, share dashboards, and get direct feedback from Anexee engineers and partners.</p>
+                        <ul>
+                            <li>Solution blueprints</li>
+                            <li>Office hours with product</li>
+                            <li>Beta features feedback</li>
+                        </ul>
+                        <a href="#" class="btn-cta" style="align-self:flex-start;padding:8px 20px;" data-hover>Join Forum</a>
+                    </div>
+                </div>
+            </section>
+
+            <section style="min-height:auto;padding:80px 10vw;">
+                <div class="detail-grid">
+                    <div class="detail-panel" aria-labelledby="self-faq-heading">
+                        <h3 id="self-faq-heading">Self FAQ Highlights</h3>
+                        <p>Step-by-step decision trees help frontline teams triage device, gateway, or visualization issues before escalating.</p>
+                        <p style="color:rgba(255,255,255,0.7);">Updated weekly with new automation recipes contributed by customer success.</p>
+                    </div>
+                    <div class="detail-panel" aria-labelledby="customer-faq-heading">
+                        <h3 id="customer-faq-heading">Customer FAQ Library</h3>
+                        <p>Centralizes all commercial and compliance answers in one spot so procurement teams always have the latest PDFs and policy memos.</p>
+                        <p style="color:rgba(255,255,255,0.7);">Includes ready-to-share trust documents, SOC summaries, and architecture diagrams.</p>
+                    </div>
+                    <div class="detail-panel" aria-labelledby="downloads-heading">
+                        <h3 id="downloads-heading">Download Center</h3>
+                        <p>Versioned installers, offline packages, and driver bundles with checksum verification for every release train.</p>
+                        <p style="color:rgba(255,255,255,0.7);">Subscribe once and get notified the moment a critical patch drops.</p>
+                    </div>
+                    <div class="detail-panel" aria-labelledby="forum-heading">
+                        <h3 id="forum-heading">Community Forum</h3>
+                        <p>Moderated spaces for ops leaders, OEM partners, and integrators. Crowdsource dashboards, scripts, and connectors.</p>
+                        <p style="color:rgba(255,255,255,0.7);">Live AMAs with product and quarterly solution showcases keep the conversation fresh.</p>
                     </div>
                 </div>
             </section>
