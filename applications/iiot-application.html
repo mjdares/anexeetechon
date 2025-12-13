@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IIoT Applications & Edge Computing | ANEXEE</title>
+
+    <!-- FONTS -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <!-- EXTERNAL LIBRARIES -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.29/bundled/lenis.min.js"></script>
+
+    <style>
+        :root {
+            --c-bg: #030305;
+            --c-text: #e0e0e0;
+            --c-accent: #00f2ea;
+            --c-accent-2: #ff0055;
+            --font-display: 'Space Grotesk', sans-serif;
+            --font-body: 'Inter', sans-serif;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background: var(--c-bg);
+            color: var(--c-text);
+            font-family: var(--font-body);
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            cursor: none;
+        }
+
+        #canvas-container {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            z-index: -1;
+            opacity: 1;
+        }
+
+        #smooth-wrapper { width: 100%; position: relative; z-index: 2; }
+
+        .cursor-dot, .cursor-circle {
+            position: fixed; top: 0; left: 0;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+        }
+        .cursor-dot { width: 6px; height: 6px; background: white; }
+        .cursor-circle {
+            width: 20px; height: 20px;
+            border: 1px solid rgba(255,255,255,0.4);
+            transition: width 0.3s, height 0.3s, background 0.3s;
+        }
+        body:hover .cursor-circle.hovered {
+            width: 30px; height: 30px;
+            background: rgba(255,255,255,0.05);
+            border-color: var(--c-accent);
+        }
+
+        nav {
+            position: fixed; top: 0; left: 0; width: 100%;
+            padding: 30px 50px;
+            display: flex; justify-content: space-between; align-items: center;
+            z-index: 100;
+            background: rgba(3, 3, 5, 0.8);
+            backdrop-filter: blur(10px);
+        }
+        .logo { font-family: var(--font-display); font-weight: 700; font-size: 24px; letter-spacing: -1px; color: white; }
+        .nav-links { display: flex; gap: 30px; align-items: center; }
+        .nav-item {
+            font-size: 14px; text-transform: uppercase; letter-spacing: 1px;
+            cursor: none; opacity: 0.7; transition: opacity 0.3s;
+            position: relative; color: white;
+        }
+        .nav-item:hover { opacity: 1; }
+        .nav-item.has-dropdown:hover .dropdown { opacity: 1; pointer-events: auto; transform: translateY(0); }
+        .dropdown {
+            position: absolute; top: 100%; left: 0;
+            background: rgba(10, 10, 15, 0.95); backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px; padding: 15px 0; min-width: 250px;
+            opacity: 0; pointer-events: none;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+        .dropdown a {
+            display: block; padding: 12px 25px; color: rgba(255,255,255,0.7);
+            text-decoration: none; font-size: 13px; text-transform: none;
+            letter-spacing: 0.5px; transition: all 0.3s;
+        }
+        .dropdown a:hover {
+            background: rgba(0, 242, 234, 0.1);
+            color: var(--c-accent); padding-left: 30px;
+        }
+        .btn-cta {
+            padding: 10px 24px;
+            border: 1px solid rgba(255,255,255,0.4);
+            border-radius: 50px;
+            font-size: 12px; text-transform: uppercase;
+            transition: all 0.3s ease; color: white; text-decoration: none;
+            display: inline-block;
+        }
+        .btn-cta:hover { background: white; color: black; }
+
+        section {
+            min-height: 100vh;
+            display: flex; flex-direction: column; justify-content: center;
+            padding: 0 10vw;
+            position: relative;
+        }
+
+        h1, h2, h3 { font-family: var(--font-display); line-height: 1.1; }
+        p { line-height: 1.6; color: rgba(255,255,255,0.6); max-width: 800px; }
+
+        .hero h1 {
+            font-size: 6vw;
+            font-weight: 300;
+            margin-bottom: 20px;
+            background: linear-gradient(to right, #fff, #888);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .hero-sub { font-size: 1.5rem; margin-bottom: 40px; }
+
+        .grid-2 {
+            display: grid; grid-template-columns: repeat(2, 1fr); gap: 30px;
+            margin-top: 50px;
+        }
+
+        .feature-card {
+            background: rgba(255,255,255,0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.05);
+            padding: 40px;
+            border-radius: 12px;
+            transition: transform 0.3s, background 0.3s;
+        }
+        .feature-card:hover {
+            background: rgba(255,255,255,0.06);
+            transform: translateY(-10px);
+        }
+        .feature-card h3 { font-size: 1.5rem; margin-bottom: 15px; color: var(--c-accent); }
+        .feature-card p { font-size: 0.9rem; }
+
+        ::-webkit-scrollbar { width: 0px; background: transparent; }
+    </style>
+</head>
+<body>
+
+    <div class="cursor-dot"></div>
+    <div class="cursor-circle"></div>
+    <div id="canvas-container"></div>
+
+    <nav>
+        <a href="../index.html" class="logo" style="text-decoration: none;">ANEXEE</a>
+        <div class="nav-links">
+            <div class="nav-item has-dropdown" data-hover>
+                Platform
+                <div class="dropdown">
+                    <a href="../platform/overview.html">Overview</a>
+                    <a href="../platform/features-capabilities.html">Features & Capabilities</a>
+                    <a href="../platform/hosting-license.html">Hosting & License</a>
+                    <a href="../platform/configuration-customization.html">Configuration & Customization</a>
+                    <a href="../platform/integration-options.html">Integration Options</a>
+                </div>
+            </div>
+            <div class="nav-item has-dropdown" data-hover>
+                Applications
+                <div class="dropdown">
+                    <a href="energy-monitoring.html">Energy Monitoring</a>
+                    <a href="multi-site-monitoring.html">Multi Site Monitoring Software</a>
+                    <a href="oem-applications.html">OEM Applications</a>
+                    <a href="hmi-visualization.html">HMI Visualization</a>
+                    <a href="alarm-management.html">Alarm Management</a>
+                    <a href="batch-monitoring.html">Batch Monitoring</a>
+                    <a href="plant-process-management.html">Plant & Process Management</a>
+                    <a href="scada-reporting.html">SCADA Reporting</a>
+                    <a href="iiot-application.html">IIoT Application</a>
+                </div>
+            </div>
+            <div class="nav-item has-dropdown" data-hover>
+                Pricing
+                <div class="dropdown">
+                    <a href="../pricing/anexee-suite.html">Anexee Suite</a>
+                    <a href="../pricing/anexee-cloud.html">Anexee Cloud</a>
+                    <a href="../pricing/ax-gateways.html">Ax Gateways</a>
+                    <a href="../pricing/edgent.html">Edgent</a>
+                    <a href="../pricing/edgedeck.html">EdgeDeck</a>
+                </div>
+            </div>
+            <a href="../support.html" class="nav-item" data-hover style="text-decoration: none;">Support</a>
+            <div class="nav-item has-dropdown" data-hover>
+                Know Us
+                <div class="dropdown">
+                    <a href="../know-us/our-mission.html">Our Mission</a>
+                    <a href="../know-us/our-team.html">Our Team</a>
+                    <a href="../know-us/our-journey.html">Our Journey</a>
+                    <a href="../know-us/our-partners.html">Our Partners</a>
+                    <a href="../know-us/customer-showcase.html">Customer Showcase</a>
+                </div>
+            </div>
+        </div>
+        <a href="#get-started" class="btn-cta" data-hover>Get Started</a>
+    </nav>
+
+    <div id="smooth-wrapper">
+        <div id="smooth-content">
+
+            <section class="hero">
+                <h1>IIoT Applications</h1>
+                <p class="hero-sub">Industrial Internet of Things & Edge Computing Solutions</p>
+            </section>
+
+            <section>
+                <h2>Next-Generation Industrial Connectivity</h2>
+                <br>
+                <p style="font-size: 1.2rem; max-width: 800px; color: #fff;">
+                    Anexee's IIoT platform enables intelligent edge computing and cloud connectivity for industrial operations.
+                    <br><br>
+                    Deploy sophisticated analytics at the edge while maintaining cloud connectivity for enterprise insights. Leverage MQTT, OPC UA, and modern protocols to build scalable IoT architectures.
+                </p>
+            </section>
+
+            <section>
+                <h2>Edge Computing Capabilities</h2>
+                <div class="grid-2">
+                    <div class="feature-card">
+                        <h3>Edge Analytics</h3>
+                        <p>Process data locally with low-latency machine learning and complex event processing. Reduce bandwidth costs while enabling real-time decision making at the source.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3>MQTT Sparkplug Integration</h3>
+                        <p>Native support for MQTT Sparkplug B specification. Auto-discovery, store-and-forward messaging, and efficient bi-directional communication with cloud platforms.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3>Container Orchestration</h3>
+                        <p>Deploy applications as Docker containers with Kubernetes orchestration. Manage edge compute workloads with version control and remote updates.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3>Protocol Translation</h3>
+                        <p>Bridge legacy industrial protocols to modern IT standards. Convert Modbus, Profinet, and EtherNet/IP to MQTT, REST APIs, and OPC UA seamlessly.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section>
+                <h2>Cloud Integration</h2>
+                <div class="grid-2">
+                    <div class="feature-card">
+                        <h3>Hybrid Architecture</h3>
+                        <p>Seamlessly split workloads between edge and cloud. Critical control remains local while analytics and long-term storage leverage cloud scalability.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3>Multi-Cloud Support</h3>
+                        <p>Connect to AWS IoT Core, Azure IoT Hub, Google Cloud IoT, or private cloud infrastructure. Avoid vendor lock-in with abstracted connectivity layers.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3>Secure Communication</h3>
+                        <p>End-to-end encryption with TLS 1.3 and certificate-based authentication. Built-in VPN tunneling and firewall traversal for secure remote access.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3>Digital Twin Integration</h3>
+                        <p>Create digital representations of physical assets with real-time synchronization. Enable simulation, predictive maintenance, and virtual commissioning.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section style="text-align: center; align-items: center;">
+                <h2>Ready to Build IIoT Solutions?</h2>
+                <p style="margin: 20px 0 40px;">Modernize your industrial infrastructure with edge and cloud.</p>
+                <a href="../platform/overview.html" class="btn-cta" style="padding: 20px 50px; border-color: var(--c-accent); font-size: 16px;" data-hover>
+                    Explore the Platform
+                </a>
+            </section>
+
+        </div>
+    </div>
+
+    <script src="../js/main.js"></script>
+</body>
+</html>
