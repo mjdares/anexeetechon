@@ -145,9 +145,13 @@ body.modal-open {
     overflow: hidden;
 }
 
+#smooth-content {
+    padding-top: clamp(110px, 12vw, 200px);
+}
+
 .hero {
     min-height: calc(100vh - clamp(90px, 11vw, 150px));
-    padding-top: clamp(10px, 4vw, 60px);
+    padding-top: clamp(10px, 4vw, 80px);
     gap: 16px;
 }
 
@@ -259,12 +263,6 @@ nav .dropdown::before {
 }
 
 @media (max-width: 768px) {
-    nav {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 16px;
-    }
-
     .arch-steps {
         flex-direction: column;
         gap: 40px;
