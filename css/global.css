@@ -102,16 +102,29 @@ nav.nav-open .menu-toggle span:nth-child(3) {
     transform: translateY(-5px) rotate(-45deg);
 }
 
-body.nav-menu-open {
-    overflow: hidden;
-}
-
 .logo {
     color: var(--c-accent, #00f2ea) !important;
+    display: inline-flex;
+    flex-direction: column;
+    line-height: 1.1;
+    text-transform: uppercase;
+}
+
+.logo-subtitle {
+    font-size: 0.55rem;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.65);
+    margin-top: 4px;
 }
 
 .accent-text {
     color: var(--c-accent, #00f2ea);
+}
+
+body.nav-menu-open,
+body.modal-open {
+    overflow: hidden;
 }
 
 /* Desktop dropdown usability */
@@ -341,6 +354,110 @@ nav .dropdown::before {
     color: rgba(255, 255, 255, 0.5);
 }
 
+.lead-modal {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 24px;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    z-index: 400;
+}
+
+.lead-modal.is-visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.lead-modal__overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+}
+
+.lead-modal__dialog {
+    position: relative;
+    z-index: 1;
+    width: min(440px, 100%);
+    background: rgba(3, 3, 5, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 24px;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.45);
+}
+
+.lead-modal__close {
+    position: absolute;
+    top: 18px;
+    right: 18px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: transparent;
+    color: rgba(255, 255, 255, 0.8);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: border-color 0.3s ease, color 0.3s ease;
+}
+
+.lead-modal__close:hover {
+    border-color: var(--c-accent, #00f2ea);
+    color: var(--c-accent, #00f2ea);
+}
+
+.lead-modal__form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.lead-modal__form label {
+    font-size: 0.85rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.lead-modal__form input {
+    width: 100%;
+    margin-top: 6px;
+    padding: 14px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.03);
+    color: #fff;
+    font-size: 1rem;
+}
+
+.lead-modal__form button {
+    margin-top: 10px;
+    width: 100%;
+    padding: 16px;
+    text-transform: uppercase;
+    border-radius: 999px;
+    border: none;
+    background: var(--c-accent, #00f2ea);
+    color: #000;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.lead-modal__form button:hover {
+    transform: translateY(-2px);
+}
+
 @media (max-width: 600px) {
     .site-footer {
         padding: 70px 5vw 40px;
@@ -350,5 +467,9 @@ nav .dropdown::before {
         flex-direction: column;
         gap: 10px;
         text-align: center;
+    }
+
+    .lead-modal__dialog {
+        padding: 28px;
     }
 }

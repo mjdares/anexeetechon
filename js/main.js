@@ -185,6 +185,117 @@ function enhanceNavigation() {
 
 enhanceNavigation();
 attachHoverListeners();
+setupLeadCaptureModal();
+
+function setupLeadCaptureModal() {
+    const ensureModal = () => {
+        let existing = document.getElementById('lead-modal');
+        if (existing) return existing;
+        const wrapper = document.createElement('div');
+        wrapper.innerHTML = `
+            <div class="lead-modal" id="lead-modal" aria-hidden="true">
+                <div class="lead-modal__overlay" data-lead-close></div>
+                <div class="lead-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="lead-modal-title">
+                    <button class="lead-modal__close" type="button" data-lead-close aria-label="Close form">&times;</button>
+                    <h3 id="lead-modal-title">Ready to get started?</h3>
+                    <p>Share a few details and we will reach out with a tailored walkthrough.</p>
+                    <form class="lead-modal__form">
+                        <label for="lead-name">Full Name
+                            <input id="lead-name" name="name" type="text" placeholder="Your Name" required>
+                        </label>
+                        <label for="lead-mobile">Mobile Number
+                            <input id="lead-mobile" name="mobile" type="tel" placeholder="+91 90000 00000" required>
+                        </label>
+                        <label for="lead-email">Email ID
+                            <input id="lead-email" name="email" type="email" placeholder="you@company.com" required>
+                        </label>
+                        <button type="submit">Submit</button>
+                    </form>
+                </div>
+            </div>
+        `;
+        const modal = wrapper.firstElementChild;
+        document.body.appendChild(modal);
+        return modal;
+    };
+
+    const modal = ensureModal();
+    const form = modal.querySelector('form');
+    const closeElements = modal.querySelectorAll('[data-lead-close]');
+    let lastFocusedElement = null;
+    const focusableSelectors = 'a[href], button:not([disabled]), textarea, input, select';
+
+    const openModal = () => {
+        if (modal.classList.contains('is-visible')) return;
+        lastFocusedElement = document.activeElement;
+        modal.classList.add('is-visible');
+        modal.setAttribute('aria-hidden', 'false');
+        document.body.classList.add('modal-open');
+        const firstInput = modal.querySelector('input');
+        if (firstInput) firstInput.focus();
+    };
+
+    const closeModal = () => {
+        modal.classList.remove('is-visible');
+        modal.setAttribute('aria-hidden', 'true');
+        document.body.classList.remove('modal-open');
+        if (lastFocusedElement) {
+            lastFocusedElement.focus();
+            lastFocusedElement = null;
+        }
+    };
+
+    const trapFocus = (event) => {
+        if (event.key !== 'Tab' || !modal.classList.contains('is-visible')) return;
+        const focusable = Array.from(modal.querySelectorAll(focusableSelectors)).filter(el => el.offsetParent !== null);
+        if (!focusable.length) return;
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+
+        if (event.shiftKey && document.activeElement === first) {
+            event.preventDefault();
+            last.focus();
+        } else if (!event.shiftKey && document.activeElement === last) {
+            event.preventDefault();
+            first.focus();
+        }
+    };
+
+    closeElements.forEach(el => {
+        el.addEventListener('click', (event) => {
+            event.preventDefault();
+            closeModal();
+        });
+    });
+
+    modal.addEventListener('keydown', trapFocus);
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && modal.classList.contains('is-visible')) {
+            closeModal();
+        }
+    });
+
+    if (form) {
+        form.addEventListener('submit', (event) => {
+            event.preventDefault();
+            form.reset();
+            closeModal();
+        });
+    }
+
+    const getStartedButtons = Array.from(document.querySelectorAll('.btn-cta')).filter(btn => {
+        return (btn.textContent || '').toLowerCase().includes('get started');
+    });
+
+    getStartedButtons.forEach(btn => {
+        if (btn.dataset.leadModalBound === 'true') return;
+        btn.dataset.leadModalBound = 'true';
+        btn.addEventListener('click', (event) => {
+            event.preventDefault();
+            openModal();
+        });
+    });
+}
 
 // --- 3. THREE.JS BACKGROUND ---
 const scene = new THREE.Scene();
