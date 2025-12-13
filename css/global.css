@@ -106,6 +106,14 @@ body.nav-menu-open {
     overflow: hidden;
 }
 
+.logo {
+    color: var(--c-accent, #00f2ea) !important;
+}
+
+.accent-text {
+    color: var(--c-accent, #00f2ea);
+}
+
 /* Desktop dropdown usability */
 nav .has-dropdown {
     position: relative;
