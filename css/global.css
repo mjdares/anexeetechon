@@ -21,6 +21,23 @@ nav .nav-links {
     gap: clamp(18px, 3vw, 40px);
 }
 
+nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 18px 36px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 32px;
+    z-index: 100;
+    background: rgba(3, 3, 5, 0.65);
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
+}
+
 nav .nav-item,
 nav .nav-item a,
 nav .nav-item button,
@@ -127,6 +144,14 @@ body.modal-open {
     overflow: hidden;
 }
 
+#smooth-content {
+    padding-top: clamp(110px, 12vw, 160px);
+}
+
+body > section:first-of-type {
+    padding-top: clamp(110px, 12vw, 160px);
+}
+
 /* Desktop dropdown usability */
 nav .has-dropdown {
     position: relative;
@@ -161,13 +186,15 @@ nav .dropdown::before {
 
 @media (max-width: 1024px) {
     nav {
-        padding: 20px 24px;
+        padding: 16px 20px;
         align-items: center;
-        flex-wrap: wrap;
+        gap: 12px;
+        flex-wrap: nowrap;
     }
 
     .menu-toggle {
         display: inline-flex;
+        margin-left: auto;
     }
 
     .nav-links {

@@ -91,7 +91,12 @@ function enhanceNavigation() {
         menuToggle.setAttribute('aria-expanded', 'false');
         menuToggle.setAttribute('data-hover', '');
         menuToggle.innerHTML = '<span></span><span></span><span></span>';
-        nav.insertBefore(menuToggle, navLinks);
+        const cta = nav.querySelector('.btn-cta');
+        if (cta && cta.parentElement === nav) {
+            nav.insertBefore(menuToggle, cta.nextSibling);
+        } else {
+            nav.appendChild(menuToggle);
+        }
     }
 
     const dropdownParents = Array.from(nav.querySelectorAll('.nav-item.has-dropdown'));
