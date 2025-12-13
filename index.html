@@ -9,6 +9,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     
     <!-- EXTERNAL LIBRARIES (GSAP, THREE, LENIS) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -34,7 +35,6 @@
             font-family: var(--font-body);
             overflow-x: hidden;
             -webkit-font-smoothing: antialiased;
-            cursor: none; /* Custom cursor */
         }
 
         /* WEBGL BACKGROUND */
@@ -82,7 +82,7 @@
         .nav-links { display: flex; gap: 30px; align-items: center; }
         .nav-item {
             font-size: 14px; text-transform: uppercase; letter-spacing: 1px;
-            cursor: none; opacity: 0.7; transition: opacity 0.3s;
+             opacity: 0.7; transition: opacity 0.3s;
             position: relative; color: white;
         }
         .nav-item:hover { opacity: 1; }
@@ -167,10 +167,16 @@
             z-index: 1; opacity: 0.5;
         }
         .step-icon { 
-            width: 80px; height: 80px; margin: 0 auto 20px; 
-            border: 1px solid var(--c-accent); border-radius: 50%; 
+            width: 90px; height: 90px; margin: 0 auto 20px; 
+            border-radius: 50%; 
             display: flex; align-items: center; justify-content: center;
-            font-size: 24px; background: #000;
+            background: radial-gradient(circle at 30% 30%, rgba(0, 242, 234, 0.35), rgba(0, 0, 0, 0.5));
+            border: 1px solid rgba(0, 242, 234, 0.3);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(0, 242, 234, 0.2);
+        }
+        .step-icon i {
+            font-size: 28px;
+            color: var(--c-accent);
         }
 
         /* TEXT REVEAL CLASSES */
@@ -182,6 +188,7 @@
         ::-webkit-scrollbar { width: 0px; background: transparent; }
 
     </style>
+    <link rel="stylesheet" href="css/global.css">
 </head>
 <body>
 
@@ -319,17 +326,23 @@
                 <div class="arch-steps">
                     <div class="arch-line"></div>
                     <div class="arch-step anim-up">
-                        <div class="step-icon">📡</div>
+                        <div class="step-icon">
+                            <i class="fa-solid fa-satellite-dish" aria-hidden="true"></i>
+                        </div>
                         <h3>Connect</h3>
                         <p>Bridge devices & data</p>
                     </div>
                     <div class="arch-step anim-up" style="transition-delay: 0.2s">
-                        <div class="step-icon">🧠</div>
+                        <div class="step-icon">
+                            <i class="fa-solid fa-gears" aria-hidden="true"></i>
+                        </div>
                         <h3>Process</h3>
                         <p>Logic, Tags, & Analytics</p>
                     </div>
                     <div class="arch-step anim-up" style="transition-delay: 0.4s">
-                        <div class="step-icon">🚀</div>
+                        <div class="step-icon">
+                            <i class="fa-solid fa-chart-line" aria-hidden="true"></i>
+                        </div>
                         <h3>Visualize</h3>
                         <p>Unlimited Clients Anywhere</p>
                     </div>
@@ -351,286 +364,6 @@
         </div>
     </div>
 
-    <!-- SCRIPTS -->
-    <script>
-        // --- 1. SETUP LENIS (SMOOTH SCROLL) ---
-        const lenis = new Lenis({
-            duration: 1.2,
-            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-            direction: 'vertical',
-            gestureDirection: 'vertical',
-            smooth: true,
-            mouseMultiplier: 1,
-            smoothTouch: false,
-            touchMultiplier: 2,
-        });
-
-        function raf(time) {
-            lenis.raf(time);
-            requestAnimationFrame(raf);
-        }
-        requestAnimationFrame(raf);
-
-        // --- 2. CUSTOM CURSOR LOGIC ---
-        const cursorDot = document.querySelector('.cursor-dot');
-        const cursorCircle = document.querySelector('.cursor-circle');
-        let mouseX = 0, mouseY = 0;
-        let cursorX = 0, cursorY = 0;
-
-        document.addEventListener('mousemove', (e) => {
-            mouseX = e.clientX;
-            mouseY = e.clientY;
-            
-            // Immediate update for dot
-            cursorDot.style.left = mouseX + 'px';
-            cursorDot.style.top = mouseY + 'px';
-        });
-
-        // Hover Effect
-        document.querySelectorAll('[data-hover]').forEach(el => {
-            el.addEventListener('mouseenter', () => cursorCircle.classList.add('hovered'));
-            el.addEventListener('mouseleave', () => cursorCircle.classList.remove('hovered'));
-        });
-
-        // Animation Loop for Smooth Circle Follow
-        function animateCursor() {
-            let dist = 0.15; // Lag factor
-            cursorX += (mouseX - cursorX) * dist;
-            cursorY += (mouseY - cursorY) * dist;
-            
-            cursorCircle.style.left = cursorX + 'px';
-            cursorCircle.style.top = cursorY + 'px';
-            requestAnimationFrame(animateCursor);
-        }
-        animateCursor();
-
-        // --- 3. THREE.JS BACKGROUND (Industrial Liquid Data) ---
-        const scene = new THREE.Scene();
-        const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
-        const renderer = new THREE.WebGLRenderer({ alpha: true });
-        const container = document.getElementById('canvas-container');
-        
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // Performance
-        container.appendChild(renderer.domElement);
-
-        // GLSL Shader
-        const fragmentShader = `
-            uniform float u_time;
-            uniform vec2 u_resolution;
-            uniform vec2 u_mouse;
-
-            // FBM Noise
-            float hash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
-            float noise(vec2 p) {
-                vec2 i = floor(p); vec2 f = fract(p);
-                vec2 u = f*f*(3.0-2.0*f);
-                return mix(mix(hash(i), hash(i+vec2(1.0,0.0)), u.x),
-                           mix(hash(i+vec2(0.0,1.0)), hash(i+vec2(1.0,1.0)), u.x), u.y);
-            }
-            float fbm(vec2 p) {
-                float v = 0.0; float a = 0.5;
-                for(int i=0; i<5; i++) { v += a*noise(p); p = p*2.0; a *= 0.5; }
-                return v;
-            }
-
-            void main() {
-                vec2 uv = gl_FragCoord.xy / u_resolution.xy;
-                uv.x *= u_resolution.x / u_resolution.y;
-
-                // Flowing Liquid Metal Logic
-                vec2 p = uv * 3.0;
-                float t = u_time * 0.1;
-                
-                // Warping
-                float n = fbm(p + vec2(t, t*0.5));
-                float n2 = fbm(p + n + vec2(t*0.2, -t*0.3));
-
-                // Color Palette: Deep Industrial Blue/Teal/Black
-                vec3 col1 = vec3(0.01, 0.01, 0.02); // Deep Black/Blue
-                vec3 col2 = vec3(0.0, 0.2, 0.3);    // Teal
-                vec3 col3 = vec3(0.0, 0.95, 0.92);  // Cyan Highlight
-
-                float mixVal = smoothstep(0.2, 0.8, n2);
-                vec3 color = mix(col1, col2, mixVal);
-                
-                // Add "Data Strands" highlight
-                float lines = step(0.95, fract(n2 * 10.0 + u_time * 0.2));
-                color += lines * col3 * 0.2;
-
-                // Mouse Interaction (Disturbance)
-                vec2 m = u_mouse / u_resolution.xy;
-                m.x *= u_resolution.x / u_resolution.y;
-                float d = length(uv - m);
-                color += vec3(0.0, 0.5, 1.0) * smoothstep(0.3, 0.0, d) * 0.2;
-
-                // Vignette
-                float vig = 1.0 - length(uv - vec2(0.5 * (u_resolution.x/u_resolution.y), 0.5));
-                color *= smoothstep(0.0, 1.0, vig);
-
-                gl_FragColor = vec4(color, 1.0);
-            }
-        `;
-
-        const vertexShader = `
-            void main() { gl_Position = vec4(position, 1.0); }
-        `;
-
-        const geometry = new THREE.PlaneGeometry(2, 2);
-        const uniforms = {
-            u_time: { value: 0 },
-            u_resolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
-            u_mouse: { value: new THREE.Vector2(0, 0) }
-        };
-
-        const material = new THREE.ShaderMaterial({
-            vertexShader,
-            fragmentShader,
-            uniforms
-        });
-
-        const plane = new THREE.Mesh(geometry, material);
-        scene.add(plane);
-
-        function renderWebGL(time) {
-            uniforms.u_time.value = time * 0.001;
-            // Smooth mouse uniform update
-            uniforms.u_mouse.value.x += (mouseX - uniforms.u_mouse.value.x) * 0.05;
-            uniforms.u_mouse.value.y += ((window.innerHeight - mouseY) - uniforms.u_mouse.value.y) * 0.05; // Flip Y for shader
-            
-            renderer.render(scene, camera);
-            requestAnimationFrame(renderWebGL);
-        }
-        renderWebGL(0);
-
-        window.addEventListener('resize', () => {
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            uniforms.u_resolution.value.set(window.innerWidth, window.innerHeight);
-        });
-
-        // --- 4. GSAP ANIMATIONS ---
-        gsap.registerPlugin(ScrollTrigger);
-
-        // Text Reveals
-        document.querySelectorAll('.anim-text').forEach(el => {
-            gsap.from(el, {
-                scrollTrigger: { trigger: el, start: "top 80%" },
-                y: 50, opacity: 0, duration: 1.5, ease: "power4.out"
-            });
-        });
-
-        // Fade Ins
-        document.querySelectorAll('.anim-fade').forEach(el => {
-            gsap.from(el, {
-                scrollTrigger: { trigger: el, start: "top 85%" },
-                y: 20, opacity: 0, duration: 1, ease: "power2.out"
-            });
-        });
-
-        // Card Stagger
-        gsap.utils.toArray('.anim-up').forEach(el => {
-            gsap.from(el, {
-                scrollTrigger: { trigger: el, start: "top 90%" },
-                y: 50, opacity: 0, duration: 1, ease: "back.out(1.7)"
-            });
-        });
-
-        // Parallax Effect on Cards (Floating feel)
-        document.querySelectorAll('.feature-card').forEach(card => {
-            card.addEventListener('mousemove', (e) => {
-                const rect = card.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
-                const centerX = rect.width / 2;
-                const centerY = rect.height / 2;
-                
-                const rotateX = ((y - centerY) / centerY) * -5; // Tilt X
-                const rotateY = ((x - centerX) / centerX) * 5;  // Tilt Y
-
-                gsap.to(card, {
-                    transform: `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.02)`,
-                    duration: 0.5,
-                    ease: "power2.out"
-                });
-            });
-
-            card.addEventListener('mouseleave', () => {
-                gsap.to(card, {
-                    transform: `perspective(1000px) rotateX(0deg) rotateY(0deg) scale(1)`,
-                    duration: 0.5
-                });
-            });
-        });
-
-        // --- 5. SYNTHETIC AUDIO ENGINE ---
-        const AudioEngine = {
-            ctx: null,
-            drone: null,
-            filter: null,
-            
-            init: function() {
-                this.ctx = new (window.AudioContext || window.webkitAudioContext)();
-                
-                // Master Gain
-                const master = this.ctx.createGain();
-                master.gain.value = 0.3; // Volume level
-                master.connect(this.ctx.destination);
-
-                // 1. Industrial Drone (Brown Noise)
-                const bufferSize = 2 * this.ctx.sampleRate;
-                const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
-                const data = buffer.getChannelData(0);
-                for(let i=0; i<bufferSize; i++) data[i] = (Math.random()*2 - 1) * 0.5;
-
-                const noise = this.ctx.createBufferSource();
-                noise.buffer = buffer;
-                noise.loop = true;
-
-                // Lowpass filter for the "hum"
-                this.filter = this.ctx.createBiquadFilter();
-                this.filter.type = 'lowpass';
-                this.filter.frequency.value = 150;
-
-                noise.connect(this.filter).connect(master);
-                noise.start();
-
-                // 2. Generative "Pings"
-                setInterval(() => {
-                    if(Math.random() > 0.7) this.playPing(master);
-                }, 3000);
-            },
-
-            playPing: function(dest) {
-                const osc = this.ctx.createOscillator();
-                const gain = this.ctx.createGain();
-                
-                // Pentatonic-ish frequencies
-                const freqs = [220, 261.63, 329.63, 392.00, 523.25];
-                osc.frequency.value = freqs[Math.floor(Math.random() * freqs.length)];
-                osc.type = 'sine';
-
-                gain.gain.setValueAtTime(0, this.ctx.currentTime);
-                gain.gain.linearRampToValueAtTime(0.05, this.ctx.currentTime + 0.1);
-                gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 2);
-
-                osc.connect(gain).connect(dest);
-                osc.start();
-                osc.stop(this.ctx.currentTime + 2);
-            }
-        };
-
-        // --- 6. INITIALIZATION SEQUENCE ---
-        // Start Audio
-        document.addEventListener('DOMContentLoaded', () => {
-            // AudioEngine.init(); // Commented out - can be enabled if needed
-
-            // Trigger Intro Animations
-            gsap.from("nav", { y: -50, opacity: 0, duration: 1, delay: 0.2 });
-            gsap.from(".hero h1", { y: 100, opacity: 0, duration: 1.5, delay: 0.5, ease: "power4.out", clearProps: "all" });
-            gsap.from(".hero-sub", { y: 50, opacity: 0, duration: 1.5, delay: 0.8, clearProps: "all" });
-            gsap.from(".hero p", { y: 30, opacity: 0, duration: 1.5, delay: 1, clearProps: "all" });
-        });
-
-    </script>
+    <script src="js/main.js"></script>
 </body>
 </html>

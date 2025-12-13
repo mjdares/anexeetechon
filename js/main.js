@@ -16,27 +16,47 @@ function raf(time) {
 }
 requestAnimationFrame(raf);
 
-// --- 2. CUSTOM CURSOR LOGIC ---
+// --- 2. CURSOR + NAVIGATION ENHANCEMENTS ---
+const body = document.body;
 const cursorDot = document.querySelector('.cursor-dot');
 const cursorCircle = document.querySelector('.cursor-circle');
+const hoverTargets = new WeakSet();
+const pointerQuery = window.matchMedia('(pointer: fine)');
+const desktopBreakpoint = 1024;
 let mouseX = 0, mouseY = 0;
 let cursorX = 0, cursorY = 0;
+
+const updateCursorMode = () => {
+    if (pointerQuery.matches && window.innerWidth > 900) {
+        body.classList.add('has-custom-cursor');
+    } else {
+        body.classList.remove('has-custom-cursor');
+    }
+};
+
+updateCursorMode();
+if (pointerQuery.addEventListener) {
+    pointerQuery.addEventListener('change', updateCursorMode);
+} else if (pointerQuery.addListener) {
+    pointerQuery.addListener(updateCursorMode);
+}
+window.addEventListener('resize', updateCursorMode);
 
 document.addEventListener('mousemove', (e) => {
     mouseX = e.clientX;
     mouseY = e.clientY;
 
-    cursorDot.style.left = mouseX + 'px';
-    cursorDot.style.top = mouseY + 'px';
-});
-
-document.querySelectorAll('[data-hover]').forEach(el => {
-    el.addEventListener('mouseenter', () => cursorCircle.classList.add('hovered'));
-    el.addEventListener('mouseleave', () => cursorCircle.classList.remove('hovered'));
+    if (cursorDot) {
+        cursorDot.style.left = mouseX + 'px';
+        cursorDot.style.top = mouseY + 'px';
+    }
 });
 
 function animateCursor() {
-    let dist = 0.15;
+    if (!cursorCircle) {
+        return;
+    }
+    const dist = 0.15;
     cursorX += (mouseX - cursorX) * dist;
     cursorY += (mouseY - cursorY) * dist;
 
@@ -45,6 +65,126 @@ function animateCursor() {
     requestAnimationFrame(animateCursor);
 }
 animateCursor();
+
+function attachHoverListeners() {
+    if (!cursorCircle) return;
+    document.querySelectorAll('[data-hover]').forEach(el => {
+        if (hoverTargets.has(el)) return;
+        el.addEventListener('mouseenter', () => cursorCircle.classList.add('hovered'));
+        el.addEventListener('mouseleave', () => cursorCircle.classList.remove('hovered'));
+        hoverTargets.add(el);
+    });
+}
+
+function enhanceNavigation() {
+    const nav = document.querySelector('nav');
+    if (!nav) return;
+    const navLinks = nav.querySelector('.nav-links');
+    if (!navLinks) return;
+
+    let menuToggle = nav.querySelector('.menu-toggle');
+    if (!menuToggle) {
+        menuToggle = document.createElement('button');
+        menuToggle.className = 'menu-toggle';
+        menuToggle.type = 'button';
+        menuToggle.setAttribute('aria-label', 'Toggle navigation menu');
+        menuToggle.setAttribute('aria-expanded', 'false');
+        menuToggle.setAttribute('data-hover', '');
+        menuToggle.innerHTML = '<span></span><span></span><span></span>';
+        nav.insertBefore(menuToggle, navLinks);
+    }
+
+    const dropdownParents = Array.from(nav.querySelectorAll('.nav-item.has-dropdown'));
+    const shouldUseClickDropdown = () => window.innerWidth <= desktopBreakpoint || !pointerQuery.matches;
+
+    dropdownParents.forEach(item => {
+        const dropdown = item.querySelector('.dropdown');
+        if (!dropdown || item.querySelector('.dropdown-toggle')) return;
+
+        let labelText = 'Menu';
+        const labelNode = Array.from(item.childNodes).find(node => node.nodeType === Node.TEXT_NODE && node.textContent.trim().length);
+        if (labelNode) {
+            labelText = labelNode.textContent.trim();
+        }
+
+        const toggleBtn = document.createElement('button');
+        toggleBtn.type = 'button';
+        toggleBtn.className = 'dropdown-toggle';
+        toggleBtn.setAttribute('aria-expanded', 'false');
+        toggleBtn.setAttribute('data-hover', '');
+        toggleBtn.innerHTML = `<span>${labelText}</span><span class=\"caret\" aria-hidden=\"true\"></span>`;
+        item.insertBefore(toggleBtn, dropdown);
+
+        Array.from(item.childNodes).forEach(node => {
+            if (node.nodeType === Node.TEXT_NODE) {
+                node.parentNode.removeChild(node);
+            }
+        });
+
+        toggleBtn.addEventListener('click', () => {
+            if (!shouldUseClickDropdown()) return;
+            const isOpen = item.classList.toggle('dropdown-open');
+            toggleBtn.setAttribute('aria-expanded', isOpen);
+            dropdownParents.forEach(other => {
+                if (other !== item) {
+                    other.classList.remove('dropdown-open');
+                    const otherBtn = other.querySelector('.dropdown-toggle');
+                    if (otherBtn) otherBtn.setAttribute('aria-expanded', 'false');
+                }
+            });
+        });
+    });
+
+    const closeDropdowns = () => {
+        dropdownParents.forEach(item => {
+            item.classList.remove('dropdown-open');
+            const btn = item.querySelector('.dropdown-toggle');
+            if (btn) btn.setAttribute('aria-expanded', 'false');
+        });
+    };
+
+    const closeMobileMenu = () => {
+        nav.classList.remove('nav-open');
+        document.body.classList.remove('nav-menu-open');
+        if (menuToggle) menuToggle.setAttribute('aria-expanded', 'false');
+    };
+
+    if (menuToggle) {
+        menuToggle.addEventListener('click', () => {
+            const isOpen = nav.classList.toggle('nav-open');
+            document.body.classList.toggle('nav-menu-open', isOpen);
+            menuToggle.setAttribute('aria-expanded', String(isOpen));
+        });
+    }
+
+    window.addEventListener('resize', () => {
+        if (window.innerWidth > desktopBreakpoint) {
+            closeMobileMenu();
+            closeDropdowns();
+        }
+    });
+
+    navLinks.querySelectorAll('a').forEach(link => {
+        if (link.dataset.menuBound) return;
+        link.dataset.menuBound = 'true';
+        link.addEventListener('click', () => {
+            if (window.innerWidth <= desktopBreakpoint) {
+                closeDropdowns();
+                closeMobileMenu();
+            }
+        });
+    });
+
+    document.addEventListener('click', (event) => {
+        if (!nav.contains(event.target) && shouldUseClickDropdown()) {
+            closeDropdowns();
+            closeMobileMenu();
+        }
+    });
+}
+
+enhanceNavigation();
+attachHoverListeners();
 
 // --- 3. THREE.JS BACKGROUND ---
 const scene = new THREE.Scene();
