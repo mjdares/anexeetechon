@@ -1,5 +1,6 @@
 body {
     cursor: auto;
+    padding-top: clamp(90px, 11vw, 150px);
 }
 
 body.has-custom-cursor {
@@ -144,12 +145,21 @@ body.modal-open {
     overflow: hidden;
 }
 
-#smooth-content {
-    padding-top: clamp(110px, 12vw, 160px);
+.hero {
+    min-height: calc(100vh - clamp(90px, 11vw, 150px));
+    padding-top: clamp(10px, 4vw, 60px);
+    gap: 16px;
 }
 
-body > section:first-of-type {
-    padding-top: clamp(110px, 12vw, 160px);
+.hero h1 {
+    font-size: clamp(42px, 5vw, 84px);
+    line-height: 1.05;
+    letter-spacing: -1px;
+}
+
+.hero-sub {
+    font-size: clamp(18px, 2vw, 24px);
+    max-width: min(720px, 90vw);
 }
 
 /* Desktop dropdown usability */
@@ -253,14 +263,6 @@ nav .dropdown::before {
         flex-direction: column;
         align-items: flex-start;
         gap: 16px;
-    }
-
-    .hero h1 {
-        font-size: 12vw;
-    }
-
-    .hero-sub {
-        font-size: 1.1rem;
     }
 
     .arch-steps {
