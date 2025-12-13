@@ -17,13 +17,13 @@ body.has-custom-cursor .cursor-circle {
     opacity: 1;
 }
 
-.nav-links {
+nav .nav-links {
     gap: clamp(18px, 3vw, 40px);
 }
 
-.nav-item,
-.nav-item a,
-.nav-item button,
+nav .nav-item,
+nav .nav-item a,
+nav .nav-item button,
 .btn-cta,
 .menu-toggle {
     cursor: pointer;
@@ -42,6 +42,11 @@ body.has-custom-cursor .cursor-circle {
     padding: 4px 0;
     opacity: 0.7;
     transition: opacity 0.3s ease;
+}
+
+.dropdown-toggle:focus-visible {
+    outline: 2px solid var(--c-accent);
+    outline-offset: 4px;
 }
 
 .dropdown-toggle .caret {
@@ -99,6 +104,26 @@ nav.nav-open .menu-toggle span:nth-child(3) {
 
 body.nav-menu-open {
     overflow: hidden;
+}
+
+/* Desktop dropdown usability */
+nav .has-dropdown {
+    position: relative;
+}
+
+nav .dropdown {
+    margin-top: 0 !important;
+    top: calc(100% + 12px) !important;
+}
+
+nav .dropdown::before {
+    content: '';
+    position: absolute;
+    top: -12px;
+    left: 0;
+    right: 0;
+    height: 12px;
+    pointer-events: auto;
 }
 
 @media (max-width: 1200px) {
