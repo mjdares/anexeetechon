@@ -1,0 +1,25 @@
+# Robots.txt for anexee.com
+# Generated: 2025-12-20
+
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://www.anexee.com/sitemap.xml
+
+# Disallow scripts and non-public directories
+Disallow: /blog-scripts/
+Disallow: /*.json$
+
+# Crawl-delay (be respectful)
+Crawl-delay: 1
+
+# Specific bot rules
+User-agent: GPTBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: CCBot
+Allow: /
