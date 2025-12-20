@@ -142,6 +142,103 @@
         }
         .hero-sub { font-size: 1.4rem; max-width: 680px; }
 
+        /* SEARCH & FILTER */
+        .search-section {
+            padding: 60px 0 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .search-container {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+        .search-box {
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        .search-box i {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--c-accent);
+            font-size: 18px;
+        }
+        #blog-search {
+            width: 100%;
+            padding: 18px 50px 18px 55px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(0, 242, 234, 0.2);
+            border-radius: 50px;
+            color: white;
+            font-size: 16px;
+            font-family: var(--font-body);
+            transition: all 0.3s;
+        }
+        #blog-search:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--c-accent);
+        }
+        #blog-search::placeholder {
+            color: rgba(255, 255, 255, 0.4);
+        }
+        .search-count {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--c-accent);
+            font-size: 14px;
+            font-weight: 600;
+        }
+        .filter-pills {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .filter-pill {
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 25px;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+            font-family: var(--font-body);
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 500;
+        }
+        .filter-pill:hover {
+            background: rgba(0, 242, 234, 0.1);
+            border-color: var(--c-accent);
+            color: white;
+        }
+        .filter-pill.active {
+            background: var(--c-accent);
+            border-color: var(--c-accent);
+            color: #030305;
+        }
+        .no-results {
+            text-align: center;
+            padding: 80px 20px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+        .no-results h3 {
+            font-size: 24px;
+            margin-bottom: 15px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+        .story-card[data-hidden="true"] {
+            display: none !important;
+        }
+
         .grid-3 {
             display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px;
             margin-top: 40px;
@@ -258,6 +355,32 @@
                 <p class="hero-sub">Stories, frameworks, and lessons learned from deploying Anexee across energy, manufacturing, and connected infrastructure.</p>
             </section>
 
+            <!-- SEARCH & FILTER SECTION -->
+            <section class="search-section">
+                <div class="search-container">
+                    <div class="search-box">
+                        <i class="fa fa-search"></i>
+                        <input
+                            type="text"
+                            id="blog-search"
+                            placeholder="Search 1000+ articles on industrial IoT, SCADA, automation..."
+                            autocomplete="off"
+                        >
+                        <span id="search-count" class="search-count"></span>
+                    </div>
+
+                    <div class="filter-pills" id="category-filters">
+                        <button class="filter-pill active" data-category="all">All</button>
+                        <button class="filter-pill" data-category="Industrial IoT">Industrial IoT</button>
+                        <button class="filter-pill" data-category="SCADA">SCADA</button>
+                        <button class="filter-pill" data-category="Energy">Energy</button>
+                        <button class="filter-pill" data-category="Maintenance">Maintenance</button>
+                        <button class="filter-pill" data-category="Edge Computing">Edge Computing</button>
+                        <button class="filter-pill" data-category="Technology">Technology</button>
+                    </div>
+                </div>
+            </section>
+
             <section>
                 <h2>Latest Field Notes</h2>
                 <div class="grid-3">
@@ -369,5 +492,90 @@
     </div>
 
     <script src="js/main.js"></script>
+
+    <script>
+    // Blog search and filter functionality
+    const searchInput = document.getElementById('blog-search');
+    const searchCount = document.getElementById('search-count');
+    const filterButtons = document.querySelectorAll('.filter-pill');
+    const blogCards = document.querySelectorAll('.story-card');
+    const blogContainer = blogCards[0]?.parentElement;
+
+    let activeCategory = 'all';
+    let noResultsMessage = null;
+
+    // Create no results message
+    function createNoResultsMessage() {
+        if (!noResultsMessage) {
+            noResultsMessage = document.createElement('div');
+            noResultsMessage.className = 'no-results';
+            noResultsMessage.innerHTML = `
+                <h3>No articles found</h3>
+                <p>Try adjusting your search or filter criteria</p>
+            `;
+            noResultsMessage.style.display = 'none';
+            blogContainer?.appendChild(noResultsMessage);
+        }
+    }
+
+    // Search functionality
+    searchInput?.addEventListener('input', (e) => {
+        const query = e.target.value.toLowerCase();
+        filterBlogs(query, activeCategory);
+    });
+
+    // Category filter functionality
+    filterButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            filterButtons.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            activeCategory = btn.dataset.category;
+            filterBlogs(searchInput.value.toLowerCase(), activeCategory);
+        });
+    });
+
+    // Main filter logic
+    function filterBlogs(query, category) {
+        let visibleCount = 0;
+
+        blogCards.forEach(card => {
+            const titleElement = card.querySelector('h3');
+            const descElement = card.querySelector('p');
+            const categoryElement = card.querySelector('span');
+
+            if (!titleElement || !descElement || !categoryElement) return;
+
+            const title = titleElement.textContent.toLowerCase();
+            const desc = descElement.textContent.toLowerCase();
+            const cat = categoryElement.textContent;
+
+            const matchesSearch = !query || title.includes(query) || desc.includes(query);
+            const matchesCategory = category === 'all' || cat === category;
+
+            if (matchesSearch && matchesCategory) {
+                card.removeAttribute('data-hidden');
+                visibleCount++;
+            } else {
+                card.setAttribute('data-hidden', 'true');
+            }
+        });
+
+        // Update search count
+        if (searchCount) {
+            searchCount.textContent = visibleCount > 0 ? `${visibleCount} article${visibleCount !== 1 ? 's' : ''}` : '';
+        }
+
+        // Show/hide no results message
+        createNoResultsMessage();
+        if (noResultsMessage) {
+            noResultsMessage.style.display = visibleCount === 0 ? 'block' : 'none';
+        }
+    }
+
+    // Initialize with all articles visible
+    if (searchCount) {
+        searchCount.textContent = `${blogCards.length} article${blogCards.length !== 1 ? 's' : ''}`;
+    }
+    </script>
 </body>
 </html>
