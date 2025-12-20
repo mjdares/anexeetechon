@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Careers at Anexee</title>
+    <link rel="icon" type="image/svg+xml" href="images/logo/anexee-logo.svg">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -61,7 +62,19 @@
             background: rgba(3, 3, 5, 0.8);
             backdrop-filter: blur(10px);
         }
-        .logo { font-family: var(--font-display); font-weight: 700; font-size: 24px; letter-spacing: -1px; color: white; }
+                .logo {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+        }
+        .logo-img {
+            height: 40px;
+            width: auto;
+            transition: opacity 0.3s;
+        }
+        .logo:hover .logo-img {
+            opacity: 0.8;
+        }
         .nav-links { display: flex; gap: 30px; align-items: center; }
         .nav-item {
             font-size: 14px; text-transform: uppercase; letter-spacing: 1px;
@@ -168,7 +181,7 @@
     <div id="canvas-container"></div>
 
     <nav>
-        <a href="index.html" class="logo" style="text-decoration: none;">
+        <a href="index.html" class="logo">
 
             <span>ANEXEE</span>
 

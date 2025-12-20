@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Industrial IoT Benefits: 12 Ways IIoT Transforms Manufacturing in 2025</title>
+    <link rel="icon" type="image/svg+xml" href="../images/logo/anexee-logo.svg">
     <meta name="description" content="Discover 12 proven industrial IoT benefits that reduce costs and boost efficiency. Learn how manufacturers achieve 20-40% improvements with IIoT implementation.">
 
     <!-- SEO Meta Tags -->
@@ -80,7 +81,19 @@
             background: rgba(3, 3, 5, 0.95);
             backdrop-filter: blur(10px);
         }
-        .logo { font-family: var(--font-display); font-weight: 700; font-size: 24px; letter-spacing: -1px; color: white; }
+                .logo {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+        }
+        .logo-img {
+            height: 40px;
+            width: auto;
+            transition: opacity 0.3s;
+        }
+        .logo:hover .logo-img {
+            opacity: 0.8;
+        }
         .logo-subtitle { display: block; font-size: 10px; letter-spacing: 2px; opacity: 0.6; text-transform: uppercase; margin-top: 2px; }
         .nav-links { display: flex; gap: 30px; align-items: center; }
         .nav-item {
@@ -423,10 +436,7 @@
 <body>
 
     <nav>
-        <a href="../index.html" class="logo" style="text-decoration: none;">
-            <span>ANEXEE</span>
-            <span class="logo-subtitle">Analytical Excellence</span>
-        </a>
+        <a href="../index.html" class="logo"><img src="../images/logo/anexee-logo.svg" alt="Anexee - Analytical Excellence" class="logo-img"></a>
         <div class="nav-links">
             <a href="../platform/overview.html" class="nav-item">Platform</a>
             <a href="../applications/energy-monitoring.html" class="nav-item">Applications</a>

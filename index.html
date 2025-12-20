@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ANEXEE | The Unified Industrial Platform</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="images/logo/anexee-logo.svg">
     
     <!-- FONTS -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -78,7 +81,19 @@
             background: rgba(3, 3, 5, 0.8);
             backdrop-filter: blur(10px);
         }
-        .logo { font-family: var(--font-display); font-weight: 700; font-size: 24px; letter-spacing: -1px; color: white; }
+        .logo {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+        }
+        .logo-img {
+            height: 40px;
+            width: auto;
+            transition: opacity 0.3s;
+        }
+        .logo:hover .logo-img {
+            opacity: 0.8;
+        }
         .nav-links { display: flex; gap: 30px; align-items: center; }
         .nav-item {
             font-size: 14px; text-transform: uppercase; letter-spacing: 1px;
@@ -201,12 +216,8 @@
 
     <!-- NAVIGATION -->
     <nav>
-        <a href="index.html" class="logo" style="text-decoration: none;">
-
-            <span>ANEXEE</span>
-
-            <span class="logo-subtitle">Analytical Excellence</span>
-
+        <a href="index.html" class="logo">
+            <img src="images/logo/anexee-logo.svg" alt="Anexee - Analytical Excellence" class="logo-img">
         </a>
         <div class="nav-links">
             <div class="nav-item has-dropdown" data-hover>
@@ -371,7 +382,7 @@
             <footer class="site-footer" id="site-footer">
                 <div class="footer-grid">
                     <div class="footer-brand">
-                        <span class="footer-logo">ANEXEE</span>
+                        <img src="images/logo/anexee-logo.svg" alt="Anexee" class="footer-logo" style="height: 32px; width: auto; margin-bottom: 20px;">
                         <p>The unified industrial platform that connects devices, intelligence, and people across every site.</p>
                         <div class="footer-social">
                             <a href="https://www.linkedin.com/company/anexee" target="_blank" rel="noopener" data-hover aria-label="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
