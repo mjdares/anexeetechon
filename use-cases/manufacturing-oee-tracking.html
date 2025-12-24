@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- SEO Meta Tags -->
+    <title>Real-Time OEE Tracking Software - 67% Downtime Reduction | Anexee</title>
+    <meta name="description" content="See how a leading automotive manufacturer achieved 67% downtime reduction with Anexee's real-time OEE tracking system. Monitor production efficiency across multiple assembly lines.">
+    <meta name="keywords" content="OEE tracking software, real-time OEE monitoring, manufacturing efficiency software, production line monitoring, SCADA OEE, overall equipment effectiveness">
+
+    <!-- Open Graph / Social Media -->
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="67% Downtime Reduction with Real-Time OEE Tracking">
+    <meta property="og:description" content="How a Tier-1 auto supplier transformed production efficiency with Anexee's unified platform">
+    <meta property="og:image" content="../images/logo/anexee-logo.svg">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="../images/logo/anexee-logo.svg">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <!-- External Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.29/bundled/lenis.min.js"></script>
+
+    <!-- Schema.org Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "CaseStudy",
+      "headline": "Manufacturing OEE Tracking - 67% Downtime Reduction",
+      "description": "Real-time OEE tracking implementation for automotive manufacturing resulting in 67% reduction in unplanned downtime",
+      "author": {
+        "@type": "Organization",
+        "name": "Anexee",
+        "url": "https://anexee.com"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Anexee"
+      },
+      "inLanguage": "en-US",
+      "about": {
+        "@type": "Thing",
+        "name": "Overall Equipment Effectiveness"
+      }
+    }
+    </script>
+
+    <style>
+        :root {
+            --c-bg: #030305;
+            --c-text: #e0e0e0;
+            --c-accent: #00f2ea;
+            --c-accent-2: #ff0055;
+            --font-display: 'Space Grotesk', sans-serif;
+            --font-body: 'Inter', sans-serif;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background: var(--c-bg);
+            color: var(--c-text);
+            font-family: var(--font-body);
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        #canvas-container {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            z-index: -1;
+            opacity: 1;
+        }
+
+        #smooth-wrapper { width: 100%; position: relative; z-index: 2; }
+
+        .cursor-dot, .cursor-circle {
+            position: fixed; top: 0; left: 0;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+        }
+        .cursor-dot { width: 6px; height: 6px; background: white; }
+        .cursor-circle {
+            width: 20px; height: 20px;
+            border: 1px solid rgba(255,255,255,0.4);
+            transition: width 0.3s, height 0.3s, background 0.3s;
+        }
+        body:hover .cursor-circle.hovered {
+            width: 30px; height: 30px;
+            background: rgba(255,255,255,0.03);
+            border-color: var(--c-accent);
+        }
+
+        nav {
+            position: fixed; top: 0; left: 0; width: 100%;
+            padding: 30px 50px;
+            display: flex; justify-content: space-between; align-items: center;
+            z-index: 100;
+            background: rgba(3, 3, 5, 0.8);
+            backdrop-filter: blur(10px);
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+        }
+        .logo-img {
+            height: 40px;
+            width: auto;
+            transition: opacity 0.3s;
+        }
+        .logo:hover .logo-img {
+            opacity: 0.8;
+        }
+        .nav-links { display: flex; gap: 30px; align-items: center; }
+        .nav-item {
+            font-size: 14px; text-transform: uppercase; letter-spacing: 1px;
+            opacity: 0.7; transition: opacity 0.3s;
+            position: relative; color: white;
+        }
+        .nav-item:hover { opacity: 1; }
+        .nav-item.has-dropdown:hover .dropdown { opacity: 1; pointer-events: auto; transform: translateY(0); }
+        .dropdown {
+            position: absolute; top: 100%; left: 0;
+            background: rgba(10, 10, 15, 0.95); backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px; padding: 15px 0; min-width: 250px;
+            opacity: 0; pointer-events: none;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+        .dropdown a {
+            display: block; padding: 12px 25px; color: rgba(255,255,255,0.7);
+            text-decoration: none; font-size: 13px; text-transform: none;
+            letter-spacing: 0.5px; transition: all 0.3s;
+        }
+        .dropdown a:hover {
+            background: rgba(0, 242, 234, 0.1);
+            color: var(--c-accent); padding-left: 30px;
+        }
+        .btn-cta {
+            padding: 10px 24px;
+            border: 1px solid rgba(255,255,255,0.4);
+            border-radius: 50px;
+            font-size: 12px; text-transform: uppercase;
+            transition: all 0.3s ease; color: white; text-decoration: none;
+            display: inline-block;
+        }
+        .btn-cta:hover { background: white; color: black; }
+
+        .btn-cta-primary {
+            background: var(--c-accent);
+            border-color: var(--c-accent);
+            color: #030305 !important;
+            font-weight: 600;
+            padding: 15px 40px;
+            font-size: 14px;
+        }
+        .btn-cta-primary:hover {
+            background: #00d4cd;
+            border-color: #00d4cd;
+            color: #030305 !important;
+        }
+
+        /* Breadcrumbs */
+        .breadcrumbs {
+            padding: 140px 10vw 20px;
+            font-size: 14px;
+            color: rgba(255,255,255,0.5);
+        }
+        .breadcrumbs a {
+            color: rgba(255,255,255,0.5);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        .breadcrumbs a:hover {
+            color: var(--c-accent);
+        }
+        .breadcrumbs span {
+            margin: 0 8px;
+        }
+
+        /* Hero Section */
+        .hero-section {
+            padding: 40px 10vw 80px;
+            min-height: 60vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .industry-badge {
+            display: inline-block;
+            padding: 8px 16px;
+            background: rgba(0, 242, 234, 0.1);
+            border: 1px solid rgba(0, 242, 234, 0.3);
+            border-radius: 50px;
+            color: var(--c-accent);
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+        .hero-section h1 {
+            font-family: var(--font-display);
+            font-size: clamp(36px, 5vw, 64px);
+            line-height: 1.1;
+            margin-bottom: 20px;
+            background: linear-gradient(to right, #fff, #888);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .hero-section .subheading {
+            font-size: clamp(18px, 2vw, 24px);
+            color: rgba(255,255,255,0.7);
+            margin-bottom: 40px;
+            max-width: 800px;
+        }
+        .metrics-row {
+            display: flex;
+            gap: 40px;
+            flex-wrap: wrap;
+            margin-top: 40px;
+        }
+        .metric-item {
+            flex: 1;
+            min-width: 200px;
+        }
+        .metric-value {
+            font-family: var(--font-display);
+            font-size: 48px;
+            color: var(--c-accent);
+            font-weight: 700;
+            line-height: 1;
+        }
+        .metric-label {
+            font-size: 14px;
+            color: rgba(255,255,255,0.6);
+            margin-top: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Content Sections */
+        .content-section {
+            padding: 80px 10vw;
+        }
+        .section-card {
+            background: rgba(255,255,255,0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.05);
+            padding: 60px;
+            border-radius: 16px;
+            margin-bottom: 40px;
+        }
+        .section-title {
+            font-family: var(--font-display);
+            font-size: 32px;
+            margin-bottom: 20px;
+            color: var(--c-accent);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .section-title i {
+            font-size: 28px;
+        }
+        .section-content {
+            line-height: 1.8;
+            color: rgba(255,255,255,0.8);
+            font-size: 16px;
+        }
+        .section-content p {
+            margin-bottom: 20px;
+        }
+        .section-content ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        .section-content li {
+            padding: 12px 0;
+            padding-left: 30px;
+            position: relative;
+        }
+        .section-content li:before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: var(--c-accent);
+            font-weight: bold;
+        }
+
+        /* Technical Grid */
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        .tech-item {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.08);
+            padding: 25px;
+            border-radius: 12px;
+            transition: all 0.3s;
+        }
+        .tech-item:hover {
+            background: rgba(255,255,255,0.05);
+            transform: translateY(-5px);
+        }
+        .tech-item h4 {
+            color: var(--c-accent);
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+        .tech-item p {
+            font-size: 14px;
+            color: rgba(255,255,255,0.6);
+            line-height: 1.6;
+        }
+
+        /* Results Grid */
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+        .result-card {
+            text-align: center;
+            padding: 30px;
+            background: rgba(0, 242, 234, 0.05);
+            border: 1px solid rgba(0, 242, 234, 0.2);
+            border-radius: 12px;
+        }
+        .result-number {
+            font-family: var(--font-display);
+            font-size: 42px;
+            color: var(--c-accent);
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        .result-text {
+            font-size: 14px;
+            color: rgba(255,255,255,0.7);
+        }
+
+        /* Quote Section */
+        .quote-section {
+            background: rgba(0, 242, 234, 0.03);
+            border-left: 4px solid var(--c-accent);
+            padding: 40px;
+            margin: 40px 0;
+            border-radius: 0 12px 12px 0;
+        }
+        .quote-text {
+            font-size: 20px;
+            font-style: italic;
+            color: rgba(255,255,255,0.9);
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        .quote-author {
+            font-size: 14px;
+            color: var(--c-accent);
+            font-weight: 600;
+        }
+
+        /* Related Cases */
+        .related-cases {
+            padding: 80px 10vw;
+            background: rgba(255,255,255,0.01);
+        }
+        .related-cases h2 {
+            font-family: var(--font-display);
+            font-size: 36px;
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        .related-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        .related-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.08);
+            padding: 30px;
+            border-radius: 12px;
+            transition: all 0.3s;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+        .related-card:hover {
+            transform: translateY(-10px);
+            background: rgba(255,255,255,0.06);
+            border-color: var(--c-accent);
+        }
+        .related-card .industry-badge {
+            margin-bottom: 15px;
+        }
+        .related-card h3 {
+            font-size: 20px;
+            margin-bottom: 10px;
+            color: white;
+        }
+        .related-card p {
+            font-size: 14px;
+            color: rgba(255,255,255,0.6);
+            line-height: 1.6;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            text-align: center;
+            padding: 100px 10vw;
+        }
+        .cta-section h2 {
+            font-family: var(--font-display);
+            font-size: 42px;
+            margin-bottom: 20px;
+        }
+        .cta-section p {
+            font-size: 18px;
+            color: rgba(255,255,255,0.7);
+            margin-bottom: 40px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        ::-webkit-scrollbar { width: 0px; background: transparent; }
+    </style>
+    <link rel="stylesheet" href="../css/global.css">
+</head>
+<body>
+    <div class="cursor-dot"></div>
+    <div class="cursor-circle"></div>
+    <div id="canvas-container"></div>
+
+    <nav>
+        <a href="../index.html" class="logo">
+            <img src="../images/logo/anexee-logo.svg" alt="Anexee - Analytical Excellence" class="logo-img">
+        </a>
+        <div class="nav-links">
+            <div class="nav-item has-dropdown" data-hover>
+                Platform
+                <div class="dropdown">
+                    <a href="../platform/overview.html">Overview</a>
+                    <a href="../platform/features-capabilities.html">Features & Capabilities</a>
+                    <a href="../platform/hosting-license.html">Hosting & License</a>
+                    <a href="../platform/configuration-customization.html">Configuration & Customization</a>
+                    <a href="../platform/integration-options.html">Integration Options</a>
+                </div>
+            </div>
+            <div class="nav-item has-dropdown" data-hover>
+                Applications
+                <div class="dropdown">
+                    <a href="../applications/energy-monitoring.html">Energy Monitoring</a>
+                    <a href="../applications/multi-site-monitoring.html">Multi Site Monitoring Software</a>
+                    <a href="../applications/oem-applications.html">OEM Applications</a>
+                    <a href="../applications/hmi-visualization.html">HMI Visualization</a>
+                    <a href="../applications/alarm-management.html">Alarm Management</a>
+                    <a href="../applications/batch-monitoring.html">Batch Monitoring</a>
+                    <a href="../applications/plant-process-management.html">Plant & Process Management</a>
+                    <a href="../applications/scada-reporting.html">SCADA Reporting</a>
+                    <a href="../applications/iiot-application.html">IIoT Application</a>
+                </div>
+            </div>
+            <div class="nav-item has-dropdown" data-hover>
+                Pricing
+                <div class="dropdown">
+                    <a href="../pricing/anexee-suite.html">Anexee Suite</a>
+                    <a href="../pricing/anexee-cloud.html">Anexee Cloud</a>
+                    <a href="../pricing/ax-gateways.html">Ax Gateways</a>
+                    <a href="../pricing/edgent.html">Edgent</a>
+                    <a href="../pricing/edgedeck.html">EdgeDeck</a>
+                </div>
+            </div>
+            <a href="../support.html" class="nav-item" data-hover style="text-decoration: none;">Support</a>
+            <div class="nav-item has-dropdown" data-hover>
+                Know Us
+                <div class="dropdown">
+                    <a href="../know-us/our-mission.html">Our Mission</a>
+                    <a href="../know-us/our-team.html">Our Team</a>
+                    <a href="../know-us/our-journey.html">Our Journey</a>
+                    <a href="../know-us/our-partners.html">Our Partners</a>
+                    <a href="../know-us/customer-showcase.html">Customer Showcase</a>
+                </div>
+            </div>
+            <a href="../blog.html" class="nav-item" data-hover style="text-decoration: none;">Blog</a>
+        </div>
+        <a href="../index.html#get-started" class="btn-cta" data-hover>Get Started</a>
+    </nav>
+
+    <div id="smooth-wrapper">
+        <div id="smooth-content">
+
+            <!-- Breadcrumbs -->
+            <div class="breadcrumbs">
+                <a href="../index.html">Home</a>
+                <span>›</span>
+                <a href="#use-cases">Use Cases</a>
+                <span>›</span>
+                <span style="color: rgba(255,255,255,0.9);">Manufacturing OEE Tracking</span>
+            </div>
+
+            <!-- Hero Section -->
+            <section class="hero-section">
+                <div class="industry-badge">
+                    <i class="fa-solid fa-industry"></i> MANUFACTURING
+                </div>
+                <h1>67% Downtime Reduction with Real-Time OEE Tracking</h1>
+                <p class="subheading">How a Tier-1 Automotive Supplier Transformed Production Efficiency Across 12 Assembly Lines</p>
+
+                <div class="metrics-row">
+                    <div class="metric-item">
+                        <div class="metric-value">67%</div>
+                        <div class="metric-label">Downtime Reduction</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-value">$2.3M</div>
+                        <div class="metric-label">Annual Savings</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-value">3 Mo</div>
+                        <div class="metric-label">Return on Investment</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-value">12</div>
+                        <div class="metric-label">Assembly Lines</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- The Challenge -->
+            <section class="content-section">
+                <div class="section-card">
+                    <h2 class="section-title">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                        The Challenge
+                    </h2>
+                    <div class="section-content">
+                        <p>A leading automotive component manufacturer operating 12 assembly lines was facing critical visibility gaps in their production operations. Despite investing in automation, the plant struggled with unpredictable downtime events that cascaded across multiple production lines.</p>
+
+                        <p><strong>Key Pain Points:</strong></p>
+                        <ul>
+                            <li>No real-time visibility into line performance or equipment status</li>
+                            <li>Manual data collection through paper-based shift logs prone to errors and delays</li>
+                            <li>Unable to identify root causes of downtime until hours or days after events occurred</li>
+                            <li>Production planning based on estimates rather than actual OEE metrics</li>
+                            <li>Maintenance teams reacting to failures instead of preventing them</li>
+                            <li>Quality issues discovered downstream, resulting in costly rework</li>
+                            <li>Disconnected legacy PLCs with no unified monitoring system</li>
+                        </ul>
+
+                        <p>The plant manager estimated that unplanned downtime was costing the facility over $3.5 million annually in lost production, overtime labor, and expedited shipping to meet customer commitments. With tight automotive industry margins, this was unsustainable.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- The Solution -->
+            <section class="content-section" style="padding-top: 0;">
+                <div class="section-card">
+                    <h2 class="section-title">
+                        <i class="fa-solid fa-lightbulb"></i>
+                        The Solution
+                    </h2>
+                    <div class="section-content">
+                        <p>Anexee deployed a comprehensive real-time OEE tracking system that unified all 12 assembly lines into a single monitoring platform. The implementation focused on automatic data collection, real-time visualization, and actionable analytics.</p>
+
+                        <p><strong>Implementation Approach:</strong></p>
+                        <ul>
+                            <li>Connected 127 PLCs and control systems via OPC UA and Modbus protocols</li>
+                            <li>Deployed edge gateways for local data processing and buffering</li>
+                            <li>Configured custom OEE calculations aligned with automotive industry standards</li>
+                            <li>Created role-based dashboards for operators, supervisors, and plant management</li>
+                            <li>Integrated with existing ERP system for production scheduling synchronization</li>
+                            <li>Implemented mobile alerts for critical downtime events</li>
+                            <li>Established automated shift reports eliminating manual data entry</li>
+                        </ul>
+
+                        <div class="tech-grid">
+                            <div class="tech-item">
+                                <h4><i class="fa-solid fa-plug"></i> Device Connectivity</h4>
+                                <p>OPC UA, Modbus TCP, Ethernet/IP protocols connecting to Siemens, Allen-Bradley, and Mitsubishi PLCs</p>
+                            </div>
+                            <div class="tech-item">
+                                <h4><i class="fa-solid fa-chart-line"></i> Real-Time Analytics</h4>
+                                <p>Live OEE calculations with availability, performance, and quality breakdowns per line and shift</p>
+                            </div>
+                            <div class="tech-item">
+                                <h4><i class="fa-solid fa-mobile-screen"></i> Mobile Access</h4>
+                                <p>Web-based dashboards accessible from any device, enabling remote monitoring and management</p>
+                            </div>
+                            <div class="tech-item">
+                                <h4><i class="fa-solid fa-database"></i> Historical Data</h4>
+                                <p>Trend analysis and reporting on 18 months of production data for continuous improvement initiatives</p>
+                            </div>
+                        </div>
+
+                        <p style="margin-top: 30px;"><strong>Implementation Timeline:</strong> The full deployment was completed in 8 weeks, with pilot testing on 3 lines followed by phased rollout to remaining production areas. Training was conducted in parallel, with operators becoming proficient in the new system within days.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- The Results -->
+            <section class="content-section" style="padding-top: 0;">
+                <div class="section-card">
+                    <h2 class="section-title">
+                        <i class="fa-solid fa-trophy"></i>
+                        The Results
+                    </h2>
+                    <div class="section-content">
+                        <p>Within three months of deployment, the manufacturing facility achieved remarkable improvements across all key performance indicators. The real-time visibility enabled rapid response to issues and data-driven decision making.</p>
+
+                        <div class="results-grid">
+                            <div class="result-card">
+                                <div class="result-number">67%</div>
+                                <div class="result-text">Reduction in Unplanned Downtime</div>
+                            </div>
+                            <div class="result-card">
+                                <div class="result-number">89%</div>
+                                <div class="result-text">Average OEE Score (from 61%)</div>
+                            </div>
+                            <div class="result-card">
+                                <div class="result-number">45 min</div>
+                                <div class="result-text">Faster MTTR (Mean Time to Repair)</div>
+                            </div>
+                            <div class="result-card">
+                                <div class="result-number">$2.3M</div>
+                                <div class="result-text">Annual Cost Savings</div>
+                            </div>
+                            <div class="result-card">
+                                <div class="result-number">98%</div>
+                                <div class="result-text">On-Time Delivery Rate</div>
+                            </div>
+                            <div class="result-card">
+                                <div class="result-number">0</div>
+                                <div class="result-text">Hours of Manual Data Entry</div>
+                            </div>
+                        </div>
+
+                        <div class="quote-section">
+                            <p class="quote-text">"Anexee transformed how we understand and manage our production floor. What used to take hours of manual analysis now happens in real-time. We've not only reduced downtime but fundamentally changed our culture to be proactive instead of reactive."</p>
+                            <p class="quote-author">— Plant Operations Director, Tier-1 Automotive Supplier</p>
+                        </div>
+
+                        <p><strong>Additional Benefits Realized:</strong></p>
+                        <ul>
+                            <li>Maintenance team shifted from 80% reactive to 70% preventive work orders</li>
+                            <li>Production scheduling accuracy improved by 34% through actual vs. estimated cycle times</li>
+                            <li>Quality defects reduced by 28% through early detection of process deviations</li>
+                            <li>Energy consumption per unit decreased 12% by identifying idle equipment</li>
+                            <li>New operator onboarding time reduced from 2 weeks to 4 days with visual work instructions</li>
+                            <li>Management gained confidence to take on additional customer contracts</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Related Use Cases -->
+            <section class="related-cases">
+                <h2>Related Use Cases</h2>
+                <div class="related-grid">
+                    <a href="#food-beverage-batch" class="related-card" data-hover>
+                        <div class="industry-badge">
+                            <i class="fa-solid fa-wheat-awn"></i> FOOD & BEVERAGE
+                        </div>
+                        <h3>Batch Tracking & Compliance</h3>
+                        <p>See how a food manufacturer achieved 100% traceability and zero compliance violations with automated batch monitoring.</p>
+                    </a>
+                    <a href="#energy-solar-monitoring" class="related-card" data-hover>
+                        <div class="industry-badge">
+                            <i class="fa-solid fa-solar-panel"></i> ENERGY
+                        </div>
+                        <h3>Multi-Site Solar Monitoring</h3>
+                        <p>How a renewable energy operator manages 50+ solar farms from a single unified platform with 40% faster issue resolution.</p>
+                    </a>
+                    <a href="#multi-site-scada" class="related-card" data-hover>
+                        <div class="industry-badge">
+                            <i class="fa-solid fa-building"></i> MULTI-SITE
+                        </div>
+                        <h3>Centralized SCADA System</h3>
+                        <p>Enterprise manufacturer consolidated 20 plants into one monitoring system, saving $1.2M in IT costs annually.</p>
+                    </a>
+                </div>
+                <div style="text-align: center; margin-top: 40px;">
+                    <a href="#all-use-cases" class="btn-cta" data-hover>View All Use Cases</a>
+                </div>
+            </section>
+
+            <!-- CTA Section -->
+            <section class="cta-section">
+                <h2>Ready for Similar Results?</h2>
+                <p>See how Anexee's unified industrial platform can transform your manufacturing operations with real-time visibility and actionable insights.</p>
+
+                <script data-b24-form="inline/15/0ovgg7" data-skip-moving="true">
+                (function(w,d,u){
+                var s=d.createElement('script');s.async=true;s.src=u+'?'+(Date.now()/180000|0);
+                var h=d.getElementsByTagName('script')[0];h.parentNode.insertBefore(s,h);
+                })(window,document,'https://cdn.bitrix24.in/b30899487/crm/form/loader_15.js');
+                </script>
+            </section>
+
+            <footer class="site-footer" id="site-footer">
+                <div class="footer-grid">
+                    <div class="footer-brand">
+                        <img src="../images/logo/anexee-logo.svg" alt="Anexee" class="footer-logo" style="height: 32px; width: auto; margin-bottom: 20px;">
+                        <p>The unified industrial platform that connects devices, intelligence, and people across every site.</p>
+                        <div class="footer-social">
+                            <a href="https://www.linkedin.com/company/anexee" target="_blank" rel="noopener" data-hover aria-label="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
+                            <a href="https://x.com/anexee" target="_blank" rel="noopener" data-hover aria-label="X"><i class="fa-brands fa-x-twitter"></i></a>
+                            <a href="https://instagram.com/anexee" target="_blank" rel="noopener" data-hover aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                            <a href="https://clutch.co/profile/anexee" target="_blank" rel="noopener" data-hover aria-label="Clutch"><i class="fa-solid fa-link"></i></a>
+                            <a href="https://www.g2.com/products/anexee/reviews" target="_blank" rel="noopener" data-hover aria-label="G2"><i class="fa-solid fa-star"></i></a>
+                        </div>
+                    </div>
+                    <div class="footer-links">
+                        <h4>Explore</h4>
+                        <a href="../platform/overview.html" data-hover>Platform</a>
+                        <a href="../applications/energy-monitoring.html" data-hover>Applications</a>
+                        <a href="../pricing/anexee-suite.html" data-hover>Pricing</a>
+                    </div>
+                    <div class="footer-links">
+                        <h4>Company</h4>
+                        <a href="../blog.html" data-hover>Blog</a>
+                        <a href="../careers.html" data-hover>Careers</a>
+                        <a href="../support.html" data-hover>Support</a>
+                    </div>
+                    <div class="footer-contact">
+                        <h4>Contact Us</h4>
+                        <p>Phone: <a href="tel:+919529618916" data-hover>+91 95296 18916</a></p>
+                        <p>Email: <a href="mailto:connect@anexee.com" data-hover>connect@anexee.com</a></p>
+                        <p><strong>Visit Us</strong><br>H1-27, IT Park, MIA Extn.<br>Udaipur - 313003 INDIA</p>
+                    </div>
+                </div>
+                <div class="footer-bottom">
+                    <span>© 2025 Anexee Platform. All Rights Reserved.</span>
+                </div>
+            </footer>
+
+        </div>
+    </div>
+
+    <script src="../js/main.js"></script>
+</body>
+</html>
