@@ -288,16 +288,20 @@ function setupLeadCaptureModal() {
         });
     }
 
-    const getStartedButtons = Array.from(document.querySelectorAll('.btn-cta')).filter(btn => {
-        return (btn.textContent || '').toLowerCase().includes('get started');
-    });
+    // Smooth scroll to anchor links for Get Started button
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            const targetId = this.getAttribute('href');
+            if (targetId === '#') return;
 
-    getStartedButtons.forEach(btn => {
-        if (btn.dataset.leadModalBound === 'true') return;
-        btn.dataset.leadModalBound = 'true';
-        btn.addEventListener('click', (event) => {
-            event.preventDefault();
-            openModal();
+            const targetElement = document.querySelector(targetId);
+            if (targetElement) {
+                e.preventDefault();
+                lenis.scrollTo(targetElement, {
+                    offset: -100,
+                    duration: 1.5
+                });
+            }
         });
     });
 }
