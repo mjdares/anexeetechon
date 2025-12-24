@@ -500,3 +500,53 @@ nav .dropdown::before {
         padding: 28px;
     }
 }
+
+/* Bitrix24 Form Custom Styling */
+#bitrix-form-container {
+    margin: 0 auto;
+}
+
+.b24-form {
+    background: transparent !important;
+}
+
+.b24-form input,
+.b24-form textarea,
+.b24-form select {
+    background: rgba(255,255,255,0.05) !important;
+    border: 1px solid rgba(255,255,255,0.1) !important;
+    border-radius: 8px !important;
+    color: white !important;
+    padding: 15px !important;
+    font-family: var(--font-body, 'Inter', sans-serif) !important;
+}
+
+.b24-form input::placeholder,
+.b24-form textarea::placeholder {
+    color: rgba(255,255,255,0.4) !important;
+}
+
+.b24-form-btn {
+    background: transparent !important;
+    border: 1px solid rgba(255,255,255,0.4) !important;
+    border-radius: 50px !important;
+    color: white !important;
+    padding: 15px 40px !important;
+    transition: all 0.3s ease !important;
+    text-transform: uppercase !important;
+    letter-spacing: 1px !important;
+    font-size: 14px !important;
+}
+
+.b24-form-btn:hover {
+    background: white !important;
+    color: black !important;
+}
+
+.b24-form-field-label {
+    color: var(--c-accent, #00f2ea) !important;
+    font-size: 14px !important;
+    text-transform: uppercase !important;
+    letter-spacing: 1px !important;
+    margin-bottom: 10px !important;
+}

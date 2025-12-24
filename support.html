@@ -437,25 +437,14 @@
             <section style="text-align: center; align-items: center;">
                 <h2>Contact Us</h2>
                 <div class="contact-form">
-                    <form>
-                        <div class="form-group">
-                            <label>Name</label>
-                            <input type="text" placeholder="Your name" data-hover>
-                        </div>
-                        <div class="form-group">
-                            <label>Email</label>
-                            <input type="email" placeholder="your.email@company.com" data-hover>
-                        </div>
-                        <div class="form-group">
-                            <label>Subject</label>
-                            <input type="text" placeholder="How can we help?" data-hover>
-                        </div>
-                        <div class="form-group">
-                            <label>Message</label>
-                            <textarea placeholder="Tell us about your project or question..." data-hover></textarea>
-                        </div>
-                        <button type="submit" class="btn-cta" style="padding: 15px 40px; font-size: 14px;" data-hover>Send Message</button>
-                    </form>
+                    <!-- Bitrix24 CRM Form -->
+                    <div id="bitrix-form-container"></div>
+                    <script data-b24-form="inline/15/0ovgg7" data-skip-moving="true">
+                    (function(w,d,u){
+                    var s=d.createElement('script');s.async=true;s.src=u+'?'+(Date.now()/180000|0);
+                    var h=d.getElementsByTagName('script')[0];h.parentNode.insertBefore(s,h);
+                    })(window,document,'https://cdn.bitrix24.in/b30899487/crm/form/loader_15.js');
+                    </script>
                 </div>
             </section>
             <footer class="site-footer" id="site-footer">
