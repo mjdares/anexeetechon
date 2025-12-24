@@ -502,12 +502,9 @@ nav .dropdown::before {
 }
 
 /* Bitrix24 Form Custom Styling */
-#bitrix-form-container {
-    margin: 0 auto;
-}
-
 .b24-form {
     background: transparent !important;
+    margin: 0 auto !important;
 }
 
 .b24-form input,
